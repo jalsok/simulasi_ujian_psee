@@ -349,17 +349,17 @@
             }
         }
 
-        function startExamSession() {
-            const inputName = document.getElementById('candidateNameInput').value.trim();
-            if (!inputName) {
-                alert("Sila masukkan nama calon terlebih dahulu!");
-                return;
-            }
+    function startExamSession() {
+    const inputName = document.getElementById('candidateNameInput').value.trim();
+    if (!inputName) {
+        alert("Sila masukkan nama calon terlebih dahulu!");
+        return;
+    }
 
-            activeCandidateName = inputName.toUpperCase();
-            document.getElementById('displayCandidateInfo').textContent = `: ${activeCandidateName}`;
+    activeCandidateName = inputName.toUpperCase();
+    document.getElementById('displayCandidateInfo').textContent = `: ${activeCandidateName}`;
 
-            // --- MULA KOD TAMBAHAN UNTUK TARIKH SEMASA ---
+    // Penyesuaian tarikh menggunakan backtick (`)
     const today = new Date();
     const day = String(today.getDate()).padStart(2, '0');
     const month = String(today.getMonth() + 1).padStart(2, '0');
@@ -367,15 +367,14 @@
     const tarikhSemasa = `${day}/${month}/${year}`;
     
     document.getElementById('displayDateInfo').textContent = `: ${tarikhSemasa} 09:00:00 - ${tarikhSemasa} 17:00:00`;
-    // --- TAMAT KOD TAMBAHAN ---
 
-            document.getElementById('startView').style.display = 'none';
-            document.getElementById('examView').style.display = 'block';
+    document.getElementById('startView').style.display = 'none';
+    document.getElementById('examView').style.display = 'block';
 
-            prepareQuestions();
-            timerInterval = setInterval(updateTimer, 1000);
-            updateTimer();
-        }
+    prepareQuestions();
+    timerInterval = setInterval(updateTimer, 1000);
+    updateTimer();
+}
 
         function submitExam(autoSubmit = false) {
             if (!autoSubmit && !confirm("Adakah anda pasti mahu menghantar semua jawapan?")) return;
