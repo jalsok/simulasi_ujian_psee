@@ -359,6 +359,16 @@
             activeCandidateName = inputName.toUpperCase();
             document.getElementById('displayCandidateInfo').textContent = `: ${activeCandidateName}`;
 
+            // --- MULA KOD TAMBAHAN UNTUK TARIKH SEMASA ---
+    const today = new Date();
+    const day = String(today.getDate()).padStart(2, '0');
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const year = today.getFullYear();
+    const tarikhSemasa = `${day}/${month}/${year}`;
+    
+    document.getElementById('displayDateInfo').textContent = `: ${tarikhSemasa} 09:00:00 - ${tarikhSemasa} 17:00:00`;
+    // --- TAMAT KOD TAMBAHAN ---
+
             document.getElementById('startView').style.display = 'none';
             document.getElementById('examView').style.display = 'block';
 
