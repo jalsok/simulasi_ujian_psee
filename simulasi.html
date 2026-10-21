@@ -1,0 +1,415 @@
+<!-- Simpan fail ini dengan nama: simulasi.html -->
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Public Service Entry Evaluation (PSEE)</title>
+    <style>
+        * { box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; }
+        body { background-color: #f0f0f0; margin: 0; padding: 10px; font-size: 13px; color: #000; }
+        .main-container { background-color: #ffffff; max-width: 1100px; margin: 0 auto; border: 1px solid #999; padding: 15px; }
+        .banner { background: linear-gradient(to right, #1d4273, #3a75b5, #88b3e8); color: white; padding: 15px 20px; font-size: 26px; font-weight: bold; letter-spacing: 1px; border-bottom: 2px solid #002244; text-shadow: 1px 1px 2px #000; }
+        
+        /* Skrin Permulaan */
+        #startView { padding: 30px 20px; text-align: center; }
+        .start-card { background-color: #f8f9fa; border: 2px solid #1d4273; border-radius: 8px; padding: 30px; max-width: 600px; margin: 0 auto; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .start-card h2 { color: #1d4273; margin-top: 0; font-size: 20px; }
+        .start-input-group { margin: 25px 0; text-align: left; }
+        .start-input-group label { display: block; font-weight: bold; margin-bottom: 8px; font-size: 14px; }
+        .start-input { width: 100%; padding: 10px; font-size: 14px; font-weight: bold; border: 1px solid #888; border-radius: 4px; text-transform: uppercase; }
+        .btn-start-exam { background: linear-gradient(to bottom, #28a745, #1e7e34); color: white; font-size: 16px; font-weight: bold; padding: 12px 40px; border: none; border-radius: 6px; cursor: pointer; box-shadow: 0 3px 6px rgba(0,0,0,0.2); transition: all 0.2s; }
+        .btn-start-exam:hover { background: linear-gradient(to bottom, #218838, #145a23); transform: translateY(-1px); }
+
+        .top-bar { display: flex; justify-content: space-between; margin-top: 10px; font-size: 14px; font-weight: bold; }
+        .timer-red { color: #d00; font-size: 16px; font-weight: bold; }
+        .logout-link { color: #d00; text-decoration: none; font-size: 13px; }
+        .divider-line { border-top: 1px dashed #aaa; margin: 8px 0 12px 0; }
+        .candidate-info { margin-bottom: 15px; line-height: 1.8; font-size: 13px; }
+        .candidate-info table { border-collapse: collapse; width: 100%; }
+        .candidate-info td { padding: 2px 5px; vertical-align: top; }
+        .candidate-info td.label { font-weight: normal; width: 150px; }
+        .candidate-info td.val { font-weight: bold; }
+
+        .status-legend { background-color: #e8e8e8; border: 1px solid #ccc; padding: 8px 12px; display: flex; flex-wrap: wrap; gap: 15px; align-items: center; font-size: 12px; margin-bottom: 15px; }
+        .legend-item { display: flex; align-items: center; gap: 5px; }
+        .dot { width: 14px; height: 14px; border-radius: 50%; display: inline-block; border: 1px solid #666; }
+        .dot.white { background-color: #ffffff; }
+        .dot.orange { background-color: #ffb100; }
+        .dot.pink { background-color: #ff6666; }
+        .dot.red { background-color: #e60000; }
+        .dot.green { background-color: #008000; }
+        .content-layout { display: flex; gap: 20px; align-items: flex-start; }
+        .left-panel { flex: 1; min-height: 300px; }
+        .instruction-box { font-size: 13px; margin-bottom: 20px; line-height: 1.4; }
+        .question-container { margin-bottom: 20px; min-height: 150px; }
+        .question-number { font-size: 14px; font-weight: bold; display: inline-block; width: 40px; vertical-align: top; }
+        .question-text-content { display: inline-block; width: calc(100% - 50px); font-size: 13px; line-height: 1.5; vertical-align: top; }
+        .options-list { list-style: none; padding: 0; margin: 20px 0 20px 40px; }
+        .options-list li { margin-bottom: 10px; }
+        .options-list label { cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 13px; }
+        .options-list input[type="radio"] { width: 15px; height: 15px; cursor: pointer; }
+        .nav-buttons { margin-left: 40px; display: flex; gap: 15px; margin-top: 25px; }
+        .btn-psee { background: linear-gradient(to bottom, #ffffff, #e0e0e0); border: 1px solid #777; border-radius: 6px; padding: 6px 20px; font-size: 13px; cursor: pointer; box-shadow: 1px 1px 2px rgba(0,0,0,0.2); }
+        .btn-psee:hover { background: #eaeaea; }
+        .btn-psee:disabled { opacity: 0.5; cursor: not-allowed; }
+        .right-panel { width: 330px; flex-shrink: 0; }
+        .grid-box { display: grid; grid-template-columns: repeat(8, 1fr); gap: 2px; background-color: #ccc; border: 1px solid #999; padding: 2px; max-height: 400px; overflow-y: auto; }
+        .q-cell { height: 30px; background-color: #ffffff; border: 1px solid #888; color: #000; font-size: 11px; display: flex; align-items: center; justify-content: center; cursor: pointer; user-select: none; }
+        .q-cell.status-white { background-color: #ffffff; color: #000; }
+        .q-cell.status-orange { background-color: #ffb100; color: #000; }
+        .q-cell.status-red { background-color: #e60000; color: #ffffff; font-weight: bold; }
+        .q-cell.status-green { background-color: #008000; color: #ffffff; }
+        .bottom-submit-area { margin-top: 30px; text-align: center; border-top: 1px solid #ccc; padding-top: 15px; }
+        
+        #examView, #resultView { display: none; }
+        .score-box { background-color: #f8f9fa; border: 2px solid #1d4273; padding: 20px; text-align: center; margin-bottom: 20px; }
+        .review-card { border: 1px solid #ccc; padding: 12px; margin-bottom: 10px; background-color: #fff; }
+        .review-card.correct { border-left: 5px solid #008000; }
+        .review-card.wrong { border-left: 5px solid #e60000; }
+        @media print {
+            .banner, .top-bar, .status-legend, .right-panel, .nav-buttons, .bottom-submit-area { display: none !important; }
+            #startView, #examView { display: none !important; }
+            #resultView { display: block !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+        <div class="banner">Public Service Entry Evaluation (PSEE)</div>
+
+        <!-- 1. SKRIN PERMULAAN -->
+        <div id="startView">
+            <div class="start-card">
+                <h2>SIMULASI PEPERIKSAAN PSEE</h2>
+                <p>Sila masukkan nama calon dan tekan butang di bawah untuk memulakan ujian simulasi (Tempoh Masa: 120 Minit).</p>
+                
+                <div class="start-input-group">
+                    <label for="candidateNameInput">Nama Penuh Calon:</label>
+                    <input type="text" id="candidateNameInput" class="start-input" placeholder="TAIP NAMA CALON DI SINI..." value="FAIZAL @ QAIRUL BIN USIDI">
+                </div>
+
+                <button class="btn-start-exam" onclick="startExamSession()">▶️ MULA UJIAN</button>
+            </div>
+        </div>
+
+        <!-- 2. PAPARAN UJIAN -->
+        <div id="examView">
+            <div class="top-bar">
+                <div class="timer-red" id="timerDisplay">02:00:00</div>
+                <div><a href="#" class="logout-link" onclick="location.reload()">[ Log Keluar ]</a></div>
+            </div>
+
+            <div class="divider-line"></div>
+
+            <div class="candidate-info">
+                <table>
+                    <tr><td class="label">Nama Calon</td><td class="val" id="displayCandidateInfo">: -</td></tr>
+                    <tr><td class="label">Jawatan</td><td class="val">: PENOLONG PEGAWAI PENGUATKUASA GRED KP5</td></tr>
+                    <tr><td class="label">Tarikh/ Waktu</td><td class="val">: 21/10/2026 09:00:00 - 21/10/2026 17:00:00</td></tr>
+                    <tr><td class="label">Tempoh Menjawab</td><td class="val">: 120 minit</td></tr>
+                </table>
+            </div>
+
+            <div class="status-legend">
+                <div class="legend-item"><span class="dot white"></span> Belum dilihat</div>
+                <div class="legend-item"><span class="dot orange"></span> Telah dilihat, tapi belum dijawab</div>
+                <div class="legend-item"><span class="dot pink"></span> Perlu dijawab semula</div>
+                <div class="legend-item"><span class="dot red"></span> Sedang dilihat</div>
+                <div class="legend-item"><span class="dot green"></span> Telah dijawab</div>
+            </div>
+
+            <div class="divider-line"></div>
+
+            <div class="content-layout">
+                <div class="left-panel">
+                    <div class="instruction-box">
+                        <strong>Arahan :</strong> Baca setiap soalan dan <strong>TANDAKAN SATU (1) JAWAPAN SAHAJA</strong> yang paling sesuai menggambarkan diri anda.
+                    </div>
+                    <div id="questionContainer"></div>
+                    <div class="nav-buttons">
+                        <button class="btn-psee" id="prevBtn" onclick="prevQuestion()">Sebelum</button>
+                        <button class="btn-psee" id="nextBtn" onclick="nextQuestion()">Seterusnya</button>
+                    </div>
+                </div>
+                <div class="right-panel">
+                    <div class="grid-box" id="questionGrid"></div>
+                </div>
+            </div>
+
+            <div class="bottom-submit-area">
+                <button class="btn-psee" style="background: #28a745; color: white; font-weight: bold; padding: 8px 30px;" onclick="submitExam()">Hantar Jawapan</button>
+            </div>
+        </div>
+
+        <!-- 3. PAPARAN KEPUTUSAN -->
+        <div id="resultView">
+            <div class="score-box">
+                <h2>KEPUTUSAN PENILAIAN PSEE</h2>
+                <h3 id="displayCandidateName" style="color: #1d4273; margin: 10px 0;"></h3>
+                <h3 id="finalScoreDisplay">0 / 0 (0%)</h3>
+            </div>
+            <div style="text-align: center; margin-bottom: 20px;">
+                <button class="btn-psee" onclick="window.print()">🖨️ Cetak Keputusan / PDF</button>
+                <button class="btn-psee" onclick="location.reload()">Mula Ujian Semula</button>
+            </div>
+            <h3>Semakan Jawapan Terperinci:</h3>
+            <div id="reviewContainer"></div>
+        </div>
+    </div>
+
+    <!-- Memuatkan soalan.js secara dinamik -->
+    <script src="soalan.js"></script>
+
+    <script>
+        const SECTION_QUOTAS = {
+            "Seksyen A: Daya Menyelesaikan Masalah": 50,
+            "Seksyen B: Kefahaman Bahasa Inggeris": 40,
+            "Seksyen C: Pengetahuan Am & Perkhidmatan Awam": 40,
+            "Seksyen D: Ujian Psikometrik": 44
+        };
+
+        let selectedQuestions = [];
+        let currentIndex = 0;
+        let userAnswers = {};
+        let questionStatus = {};
+        let activeCandidateName = "";
+
+        function shuffleArray(array) {
+            let shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        function prepareQuestions() {
+            let qBank = null;
+            if (typeof questionBank !== 'undefined') qBank = questionBank;
+            else if (typeof varQuestionBank !== 'undefined') qBank = varQuestionBank;
+            else if (window.questionBank) qBank = window.questionBank;
+
+            if (!qBank) {
+                document.getElementById('questionContainer').innerHTML = 
+                    "<div style='color:red; font-weight:bold; padding:15px; border:1px solid red; background:#ffe6e6;'>" +
+                    "Ralat: Fail soalan.js tidak dapat dibaca.<br><br>" +
+                    "<strong>Sila pastikan:</strong><br>" +
+                    "1. Fail 'soalan.js' berada dalam folder yang sama dengan 'simulasi.html'.<br>" +
+                    "2. Baris pertama fail soalan.js ditulis sebagai: <code>var questionBank = { ... };</code><br>" +
+                    "3. Tiada ralat sintaks (seperti tertinggal koma) di dalam fail soalan.js." +
+                    "</div>";
+                return false;
+            }
+
+            selectedQuestions = [];
+
+            for (const [section, questions] of Object.entries(qBank)) {
+                if (Array.isArray(questions) && questions.length > 0) {
+                    let shuffledSection = shuffleArray(questions);
+                    let quota = SECTION_QUOTAS[section] || shuffledSection.length;
+                    let picked = shuffledSection.slice(0, quota);
+
+                    picked.forEach(q => {
+                        selectedQuestions.push({ ...q, section });
+                    });
+                }
+            }
+
+            selectedQuestions.forEach((_, idx) => {
+                questionStatus[idx] = 'white';
+            });
+
+            if (selectedQuestions.length > 0) {
+                questionStatus[0] = 'red';
+                renderGrid();
+                renderCurrentQuestion();
+                return true;
+            } else {
+                document.getElementById('questionContainer').innerHTML = "<p style='color:red; padding:15px;'>Tiada soalan ditemui di dalam questionBank.</p>";
+                return false;
+            }
+        }
+
+        function renderGrid() {
+            const grid = document.getElementById('questionGrid');
+            grid.innerHTML = "";
+
+            selectedQuestions.forEach((_, idx) => {
+                const cell = document.createElement('div');
+                cell.className = 'q-cell';
+                cell.textContent = idx + 1;
+                cell.onclick = () => jumpToQuestion(idx);
+                grid.appendChild(cell);
+            });
+            updateGridStatus();
+        }
+
+        function updateGridStatus() {
+            const cells = document.querySelectorAll('.q-cell');
+            cells.forEach((cell, idx) => {
+                cell.className = 'q-cell';
+                let st = questionStatus[idx] || 'white';
+                if (userAnswers[idx] !== undefined) st = 'green';
+                if (idx === currentIndex) st = 'red';
+                cell.classList.add('status-' + st);
+            });
+        }
+
+        function renderCurrentQuestion() {
+            if (selectedQuestions.length === 0) return;
+            const q = selectedQuestions[currentIndex];
+
+            const container = document.getElementById('questionContainer');
+            container.innerHTML = `
+                <div class="question-container">
+                    <span class="question-number">${currentIndex + 1}</span>
+                    <div class="question-text-content">${q.q}</div>
+                    
+                    <ul class="options-list">
+                        ${q.options.map(opt => `
+                            <li>
+                                <label>
+                                    <input type="radio" name="currentOption" value="${opt.charAt(0)}" 
+                                           ${userAnswers[currentIndex] === opt.charAt(0) ? 'checked' : ''} 
+                                           onchange="selectAnswer('${opt.charAt(0)}')">
+                                    ${opt}
+                                </label>
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+            `;
+
+            document.getElementById('prevBtn').disabled = (currentIndex === 0);
+            document.getElementById('nextBtn').disabled = (currentIndex === selectedQuestions.length - 1);
+
+            updateGridStatus();
+        }
+
+        function selectAnswer(val) {
+            userAnswers[currentIndex] = val;
+            questionStatus[currentIndex] = 'green';
+            updateGridStatus();
+        }
+
+        function jumpToQuestion(index) {
+            if (userAnswers[currentIndex] === undefined) {
+                questionStatus[currentIndex] = 'orange';
+            }
+            currentIndex = index;
+            questionStatus[currentIndex] = 'red';
+            renderCurrentQuestion();
+        }
+
+        function nextQuestion() {
+            if (currentIndex < selectedQuestions.length - 1) {
+                if (userAnswers[currentIndex] === undefined) {
+                    questionStatus[currentIndex] = 'orange';
+                }
+                currentIndex++;
+                questionStatus[currentIndex] = 'red';
+                renderCurrentQuestion();
+            }
+        }
+
+        function prevQuestion() {
+            if (currentIndex > 0) {
+                if (userAnswers[currentIndex] === undefined) {
+                    questionStatus[currentIndex] = 'orange';
+                }
+                currentIndex--;
+                questionStatus[currentIndex] = 'red';
+                renderCurrentQuestion();
+            }
+        }
+
+        /* Tetapan Pemasa 120 Minit */
+        let totalSeconds = 120 * 60;
+        const timerDisplay = document.getElementById('timerDisplay');
+        let timerInterval;
+
+        function updateTimer() {
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+            
+            timerDisplay.textContent = 
+                String(hours).padStart(2, '0') + ':' + 
+                String(minutes).padStart(2, '0') + ':' + 
+                String(seconds).padStart(2, '0');
+
+            if (totalSeconds > 0) {
+                totalSeconds--;
+            } else { 
+                clearInterval(timerInterval); 
+                timerDisplay.textContent = "00:00:00 (MASA TAMAT)";
+                alert("Masa 2 jam telah tamat! Sila tekan butang 'Hantar Jawapan' di bahagian bawah untuk menyemak keputusan anda.");
+            }
+        }
+
+        function startExamSession() {
+            const inputName = document.getElementById('candidateNameInput').value.trim();
+            if (!inputName) {
+                alert("Sila masukkan nama calon terlebih dahulu!");
+                return;
+            }
+
+            activeCandidateName = inputName.toUpperCase();
+            document.getElementById('displayCandidateInfo').textContent = `: ${activeCandidateName}`;
+
+            document.getElementById('startView').style.display = 'none';
+            document.getElementById('examView').style.display = 'block';
+
+            prepareQuestions();
+            timerInterval = setInterval(updateTimer, 1000);
+            updateTimer();
+        }
+
+        function submitExam(autoSubmit = false) {
+            if (!autoSubmit && !confirm("Adakah anda pasti mahu menghantar semua jawapan?")) return;
+            clearInterval(timerInterval);
+
+            let score = 0;
+            selectedQuestions.forEach((q, idx) => {
+                if (userAnswers[idx] === q.answer) score++;
+            });
+
+            document.getElementById('examView').style.display = 'none';
+            document.getElementById('resultView').style.display = 'block';
+
+            document.getElementById('displayCandidateName').textContent = `NAMA CALON: ${activeCandidateName}`;
+
+            const total = selectedQuestions.length;
+            const percentage = ((score / total) * 100).toFixed(1);
+            document.getElementById('finalScoreDisplay').textContent = `SKOR: ${score} / ${total} (${percentage}%)`;
+
+            const reviewContainer = document.getElementById('reviewContainer');
+            reviewContainer.innerHTML = "";
+
+            selectedQuestions.forEach((q, idx) => {
+                const userChoice = userAnswers[idx] || "Tiada Jawapan";
+                const isCorrect = userChoice === q.answer;
+                const userOptionText = q.options.find(opt => opt.startsWith(userChoice)) || "Tiada Jawapan";
+                const correctOptionText = q.options.find(opt => opt.startsWith(q.answer)) || q.answer;
+
+                const card = document.createElement('div');
+                card.className = `review-card ${isCorrect ? 'correct' : 'wrong'}`;
+
+                card.innerHTML = `
+                    <div style="font-weight: bold; color: ${isCorrect ? '#008000' : '#e60000'}; margin-bottom: 5px;">
+                        Soalan ${idx + 1} (${q.section}): ${isCorrect ? '✓ BETUL' : '✗ SALAH'}
+                    </div>
+                    <div style="margin-bottom: 8px;">${q.q}</div>
+                    <div>Jawapan Anda: <strong>${userOptionText}</strong></div>
+                    ${!isCorrect ? `<div style="color: #008000; margin-top: 3px;">Jawapan Betul: <strong>${correctOptionText}</strong></div>` : ''}
+                `;
+                reviewContainer.appendChild(card);
+            });
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

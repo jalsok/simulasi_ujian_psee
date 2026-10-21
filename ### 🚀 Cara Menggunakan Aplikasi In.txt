@@ -1,0 +1,13 @@
+### 🚀 Cara Menggunakan Aplikasi Ini:
+1. **Buka Notepad** (atau mana-mana text editor) pada komputer atau telefon pintar anda.
+2. **Salin (Copy) keseluruhan kod HTML** di atas, lalu tampalkan (Paste) ke dalam Notepad tersebut.
+3. Simpan fail tersebut dengan nama **`simulasi_psee.html`** (pastikan sambungan di hujungnya ialah `.html` dan bukannya `.txt`).
+4. Klik dua kali fail tersebut untuk membukanya terus di mana-mana pelayar internet (Chrome, Safari, Edge). 
+
+Aplikasi ini sudah mempunyai susunan algoritma yang akan **menjana 174 soalan lengkap secara otomatik**, membahagikan masa kuiz kepada 2 jam penuh, dan menanda jawapan yang telah anda tanda pada panel grid sisi kanan dengan warna hijau secara interaktif seperti format PSEE SPA yang sebenar!
+
+<FollowUp>
+Bila anda sudah berjaya membukanya pada peranti anda, maklumkan kepada saya jika anda mahu saya bantu menerangkan **strategi psikologi** di sebalik menjawab soalan kategori **Sikap/Nilai (Psikometrik)** yang merupakan lubang kegagalan terbesar calon.
+</FollowUp>
+
+<ActionUnit query="panduan lulus ujian psikometrik spa online" placement="bottom" intent="informational" />
