@@ -19,7 +19,8 @@
         .start-input-group label { display: block; font-weight: bold; margin-bottom: 8px; font-size: 14px; }
         .start-input { width: 100%; padding: 10px; font-size: 14px; font-weight: bold; border: 1px solid #888; border-radius: 4px; text-transform: uppercase; }
         .btn-start-exam { background: linear-gradient(to bottom, #28a745, #1e7e34); color: white; font-size: 16px; font-weight: bold; padding: 12px 40px; border: none; border-radius: 6px; cursor: pointer; box-shadow: 0 3px 6px rgba(0,0,0,0.2); transition: all 0.2s; }
-        .btn-start-exam:hover { background: linear-gradient(to bottom, #218838, #145a23); transform: translateY(-1px); }
+        .btn-start-exam:hover:not(:disabled) { background: linear-gradient(to bottom, #218838, #145a23); transform: translateY(-1px); }
+        .btn-start-exam:disabled { background: #6c757d; cursor: not-allowed; transform: none; box-shadow: none; }
 
         .top-bar { display: flex; justify-content: space-between; margin-top: 10px; font-size: 14px; font-weight: bold; }
         .timer-red { color: #d00; font-size: 16px; font-weight: bold; }
@@ -90,7 +91,8 @@
                     <input type="text" id="candidateNameInput" class="start-input" placeholder="TAIP NAMA CALON DI SINI..." value="FAIZAL @ QAIRUL BIN USIDI">
                 </div>
 
-                <button class="btn-start-exam" onclick="startExamSession()">▶️ MULA UJIAN</button>
+                <!-- Butang dikunci sementara memuat turun soalan -->
+                <button id="btnStartExam" class="btn-start-exam" onclick="startExamSession()" disabled>⏳ MEMUAT TURUN SOALAN...</button>
             </div>
         </div>
 
@@ -159,29 +161,34 @@
         </div>
     </div>
 
-    <!-- Memuatkan soalan.js secara dinamik -->
-
-
+    <!-- Skrip memuat turun soalan secara selamat dari Web App Google -->
     <script>
-  // Your Google Apps Script Web App URL
-  const webAppUrl = "https://script.google.com/macros/s/AKfycbxWhzBOMGWhk_N3K08lDe0ZIPoVcR6t4iVWbjzUqG3Nbdsq3qCu7fJfFLh4Zma_9fyl/exec";
+        const webAppUrl = "https://script.google.com/macros/s/AKfycbxWhzBOMGWhk_N3K08lDe0ZIPoVcR6t4iVWbjzUqG3Nbdsq3qCu7fJfFLh4Zma_9fyl/exec";
 
-  // Fetch the questions from the Web App
-  fetch(webAppUrl)
-    .then(response => response.json())
-    .then(data => {
-      // Assign the fetched data to the variable your app uses (e.g., 'soalan' or 'questions')
-      window.questionBank = data; 
-      
-      // If you have a function to start the quiz, call it here (e.g., prepareQuestions();)
-      console.log("Questions loaded securely from Google Drive!");
-    })
-    .catch(error => {
-      console.error("Error loading questions:", error);
-    });
-</script>
+        fetch(webAppUrl)
+            .then(response => response.json())
+            .then(data => {
+                // Simpan data soalan ke dalam questionBank
+                window.questionBank = data; 
+                console.log("Soalan berjaya dimuat turun dari Google Drive!");
+                
+                // Buka kunci butang mula ujian
+                const btnStart = document.getElementById('btnStartExam');
+                if(btnStart) {
+                    btnStart.disabled = false;
+                    btnStart.innerText = "▶️ MULA UJIAN";
+                }
+            })
+            .catch(error => {
+                console.error("Ralat memuat turun soalan:", error);
+                const btnStart = document.getElementById('btnStartExam');
+                if(btnStart) {
+                    btnStart.innerText = "❌ GAGAL MEMUAT TURUN SOALAN";
+                }
+                alert("Gagal memuat turun soalan. Sila pastikan format JSON di Apps Script adalah betul dan cuba lagi.");
+            });
+    </script>
     
-
     <script>
         const SECTION_QUOTAS = {
             "Seksyen A: Daya Menyelesaikan Masalah": 50,
@@ -214,11 +221,8 @@
             if (!qBank) {
                 document.getElementById('questionContainer').innerHTML = 
                     "<div style='color:red; font-weight:bold; padding:15px; border:1px solid red; background:#ffe6e6;'>" +
-                    "Ralat: Fail soalan.js tidak dapat dibaca.<br><br>" +
-                    "<strong>Sila pastikan:</strong><br>" +
-                    "1. Fail 'soalan.js' berada dalam folder yang sama dengan 'simulasi.html'.<br>" +
-                    "2. Baris pertama fail soalan.js ditulis sebagai: <code>var questionBank = { ... };</code><br>" +
-                    "3. Tiada ralat sintaks (seperti tertinggal koma) di dalam fail soalan.js." +
+                    "Ralat: Data soalan gagal dibaca daripada Google Drive.<br><br>" +
+                    "<strong>Sila pastikan Web App Apps Script memulangkan struktur JSON yang betul.</strong>" +
                     "</div>";
                 return false;
             }
@@ -369,32 +373,33 @@
             }
         }
 
-    function startExamSession() {
-    const inputName = document.getElementById('candidateNameInput').value.trim();
-    if (!inputName) {
-        alert("Sila masukkan nama calon terlebih dahulu!");
-        return;
-    }
+        function startExamSession() {
+            const inputName = document.getElementById('candidateNameInput').value.trim();
+            if (!inputName) {
+                alert("Sila masukkan nama calon terlebih dahulu!");
+                return;
+            }
 
-    activeCandidateName = inputName.toUpperCase();
-    document.getElementById('displayCandidateInfo').textContent = `: ${activeCandidateName}`;
+            activeCandidateName = inputName.toUpperCase();
+            document.getElementById('displayCandidateInfo').textContent = `: ${activeCandidateName}`;
 
-    // Penyesuaian tarikh menggunakan backtick (`)
-    const today = new Date();
-    const day = String(today.getDate()).padStart(2, '0');
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const year = today.getFullYear();
-    const tarikhSemasa = `${day}/${month}/${year}`;
-    
-    document.getElementById('displayDateInfo').textContent = `: ${tarikhSemasa} 09:00:00 - ${tarikhSemasa} 17:00:00`;
+            const today = new Date();
+            const day = String(today.getDate()).padStart(2, '0');
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const year = today.getFullYear();
+            const tarikhSemasa = `${day}/${month}/${year}`;
+            
+            document.getElementById('displayDateInfo').textContent = `: ${tarikhSemasa} 09:00:00 - ${tarikhSemasa} 17:00:00`;
 
-    document.getElementById('startView').style.display = 'none';
-    document.getElementById('examView').style.display = 'block';
+            document.getElementById('startView').style.display = 'none';
+            document.getElementById('examView').style.display = 'block';
 
-    prepareQuestions();
-    timerInterval = setInterval(updateTimer, 1000);
-    updateTimer();
-}
+            const ready = prepareQuestions();
+            if(ready) {
+                timerInterval = setInterval(updateTimer, 1000);
+                updateTimer();
+            }
+        }
 
         function submitExam(autoSubmit = false) {
             if (!autoSubmit && !confirm("Adakah anda pasti mahu menghantar semua jawapan?")) return;
