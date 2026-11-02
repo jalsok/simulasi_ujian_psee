@@ -171,7 +171,7 @@
     .then(response => response.json())
     .then(data => {
       // Assign the fetched data to the variable your app uses (e.g., 'soalan' or 'questions')
-      window.soalan = data; 
+      window.questionBank = data; 
       
       // If you have a function to start the quiz, call it here (e.g., prepareQuestions();)
       console.log("Questions loaded securely from Google Drive!");
