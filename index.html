@@ -160,7 +160,27 @@
     </div>
 
     <!-- Memuatkan soalan.js secara dinamik -->
-    <script src="soalan.js"></script>
+
+
+    <script>
+  // Your Google Apps Script Web App URL
+  const webAppUrl = "https://script.google.com/macros/s/AKfycbxWhzBOMGWhk_N3K08lDe0ZIPoVcR6t4iVWbjzUqG3Nbdsq3qCu7fJfFLh4Zma_9fyl/exec";
+
+  // Fetch the questions from the Web App
+  fetch(webAppUrl)
+    .then(response => response.json())
+    .then(data => {
+      // Assign the fetched data to the variable your app uses (e.g., 'soalan' or 'questions')
+      window.soalan = data; 
+      
+      // If you have a function to start the quiz, call it here (e.g., prepareQuestions();)
+      console.log("Questions loaded securely from Google Drive!");
+    })
+    .catch(error => {
+      console.error("Error loading questions:", error);
+    });
+</script>
+    
 
     <script>
         const SECTION_QUOTAS = {
