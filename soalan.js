@@ -1,4 +1,3 @@
-// Simpan fail ini dengan nama: soalan.js
 const questionBank = {
     "Seksyen A: Daya Menyelesaikan Masalah": [
         {
